@@ -1,4 +1,4 @@
-# Ocean Hazard Reporting Platform 🌊
+#OceanPulse - Ocean Hazard Reporting Platform 🌊
 
 
 ## Overview
@@ -39,4 +39,4 @@ The platform enables **real-time ocean hazard reporting**, predictive insights u
 ### Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/<your-username>/Ocean-Hazard-Reporting-Platform.git
+git clone https://github.com/Bavan23/OceanPulse.git

@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 touch-target focus-visible-enhanced",
   {
     variants: {
       variant: {
@@ -15,13 +15,13 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         // Ocean-themed variants
-        ocean: "gradient-ocean text-white hover:opacity-90 shadow-lg hover:shadow-xl transform hover:scale-105",
-        wave: "gradient-wave text-white hover:opacity-90 wave-animation",
-        danger: "gradient-danger text-danger-foreground hover:opacity-90 pulse-danger",
-        success: "bg-success text-success-foreground hover:bg-success/90",
-        warning: "bg-warning text-warning-foreground hover:bg-warning/90",
+        ocean: "gradient-ocean text-white hover:opacity-90 shadow-lg hover:shadow-xl transform hover:scale-105 focus-visible:ring-primary",
+        wave: "gradient-wave text-white hover:opacity-90 wave-animation focus-visible:ring-primary",
+        danger: "gradient-danger text-danger-foreground hover:opacity-90 pulse-danger focus-visible:ring-danger",
+        success: "bg-success text-success-foreground hover:bg-success/90 focus-visible:ring-success",
+        warning: "bg-warning text-warning-foreground hover:bg-warning/90 focus-visible:ring-warning",
         // Floating action button
-        floating: "fixed bottom-6 right-6 rounded-full shadow-2xl hover:shadow-3xl bg-primary text-primary-foreground hover:bg-primary/90 z-50 float-animation",
+        floating: "fixed bottom-6 right-6 rounded-full shadow-2xl hover:shadow-3xl bg-primary text-primary-foreground hover:bg-primary/90 z-50 float-animation focus-visible:ring-primary",
       },
       size: {
         default: "h-10 px-4 py-2",

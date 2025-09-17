@@ -8,28 +8,28 @@ All colors MUST be HSL. Ocean-themed with modern aesthetics.
 
 @layer base {
   :root {
-    /* Core Ocean Theme */
+    /* Core Ocean Theme - Enhanced Contrast */
     --background: 0 0% 100%;
-    --foreground: 210 22% 22%;
+    --foreground: 210 25% 15%; /* Improved contrast: 15% instead of 22% */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 22% 22%;
+    --card-foreground: 210 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 22% 22%;
+    --popover-foreground: 210 25% 15%;
 
-    /* Ocean Blue Primary - #007BFF equivalent */
-    --primary: 211 100% 50%;
+    /* Ocean Blue Primary - Enhanced Accessibility */
+    --primary: 211 100% 45%; /* Slightly darker for better contrast */
     --primary-foreground: 0 0% 100%;
     --primary-light: 211 100% 85%;
-    --primary-dark: 211 100% 35%;
+    --primary-dark: 211 100% 30%; /* Darker for better contrast */
 
-    /* Hazard Alert Colors */
-    --danger: 0 100% 63%;        /* Red #FF4C4C for high-risk hazards */
+    /* Hazard Alert Colors - WCAG AA Compliant */
+    --danger: 0 85% 55%;        /* Improved contrast ratio */
     --danger-foreground: 0 0% 100%;
-    --warning: 45 100% 51%;      /* Yellow #FFC107 for moderate risk */
-    --warning-foreground: 210 22% 22%;
-    --success: 142 76% 36%;      /* Green for safe/resolved */
+    --warning: 45 100% 45%;     /* Better contrast */
+    --warning-foreground: 210 25% 15%; /* Darker text for better readability */
+    --success: 142 70% 30%;     /* Darker green for better contrast */
     --success-foreground: 0 0% 100%;
 
     /* Ocean Gradients */
@@ -37,22 +37,22 @@ All colors MUST be HSL. Ocean-themed with modern aesthetics.
     --gradient-wave: linear-gradient(180deg, hsl(211 100% 50%), hsl(211 100% 35%));
     --gradient-danger: linear-gradient(135deg, hsl(0 100% 63%), hsl(15 100% 55%));
 
-    /* UI Colors */
+    /* UI Colors - Enhanced Accessibility */
     --secondary: 210 14% 95%;
-    --secondary-foreground: 210 22% 22%;
+    --secondary-foreground: 210 25% 15%;
 
     --muted: 210 14% 96%;
-    --muted-foreground: 210 16% 50%;
+    --muted-foreground: 210 20% 40%; /* Improved contrast */
 
     --accent: 211 100% 95%;
-    --accent-foreground: 210 22% 22%;
+    --accent-foreground: 210 25% 15%;
 
-    --destructive: 0 100% 63%;
+    --destructive: 0 85% 55%; /* Consistent with danger color */
     --destructive-foreground: 0 0% 100%;
 
     --border: 210 14% 89%;
     --input: 210 14% 89%;
-    --ring: 211 100% 50%;
+    --ring: 211 100% 45%; /* Consistent with primary */
 
     --radius: 0.5rem;
 
@@ -135,9 +135,72 @@ All colors MUST be HSL. Ocean-themed with modern aesthetics.
   html {
     scroll-behavior: smooth;
   }
+
+  /* Enhanced Focus Indicators for Accessibility */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Improved focus for interactive elements */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [role="button"]:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    :root {
+      --foreground: 210 30% 10%;
+      --muted-foreground: 210 25% 25%;
+      --border: 210 20% 20%;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 @layer utilities {
+  /* Enhanced Focus Indicators for Accessibility */
+  .focus-visible-enhanced {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  .focus-visible-danger {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    :root {
+      --primary: 211 100% 35%;
+      --danger: 0 100% 45%;
+      --warning: 45 100% 35%;
+      --success: 142 100% 25%;
+    }
+  }
+
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+    .wave-animation,
+    .float-animation,
+    .pulse-danger {
+      animation: none;
+    }
+  }
+
   /* Ocean Wave Animation */
   .wave-animation {
     background: linear-gradient(45deg, 
@@ -191,6 +254,21 @@ All colors MUST be HSL. Ocean-themed with modern aesthetics.
     }
   }
 
+
+  /* Mobile-optimized spacing */
+  .mobile-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-margin {
+    @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+
+  /* Enhanced mobile interactions */
+  .mobile-tap {
+    @apply active:scale-95 transition-transform duration-150;
+  }
+
   /* Responsive text utilities */
   .text-responsive-xl { 
     @apply text-2xl md:text-3xl lg:text-4xl;
@@ -198,5 +276,90 @@ All colors MUST be HSL. Ocean-themed with modern aesthetics.
   
   .text-responsive-lg { 
     @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  /* Mobile-optimized touch targets */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px]; /* iOS/Android minimum touch target */
+  }
+
+  .touch-target-large {
+    @apply min-h-[48px] min-w-[48px]; /* Larger touch target for important actions */
+  }
+
+  /* Mobile-specific interactions */
+  .mobile-optimized {
+    @apply touch-manipulation; /* Optimize for touch */
+  }
+
+  /* Improved mobile spacing */
+  .mobile-spacing {
+    @apply space-y-4 md:space-y-6;
+  }
+
+  .mobile-padding {
+    @apply p-4 md:p-6 lg:p-8;
+  }
+
+  /* Mobile-friendly cards */
+  .mobile-card {
+    @apply rounded-lg md:rounded-xl shadow-sm md:shadow-md hover:shadow-md md:hover:shadow-lg transition-shadow border border-border p-4 sm:p-6;
+  }
+
+  /* Swipe-friendly containers */
+  .swipe-container {
+    @apply overflow-x-auto scrollbar-hide;
+    scroll-snap-type: x mandatory;
+  }
+
+  .swipe-item {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  /* Mobile-first touch targets */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px]; /* iOS/Android recommended touch target */
+  }
+
+  .touch-target-sm {
+    @apply min-h-[36px] min-w-[36px]; /* Smaller touch target for dense layouts */
+  }
+
+  /* Mobile-specific interactions */
+  .mobile-swipe {
+    @apply touch-pan-x;
+  }
+
+  .mobile-scroll {
+    @apply touch-pan-y;
+  }
+
+  /* Enhanced mobile spacing */
+  .mobile-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-margin {
+    @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+
+  /* Mobile-optimized cards */
+  .mobile-card {
+    @apply rounded-lg border bg-card p-4 sm:p-6;
+  }
+
+  /* Mobile navigation improvements */
+  .mobile-nav-item {
+    @apply touch-target flex items-center justify-center p-3 rounded-lg transition-colors;
+  }
+
+  /* Mobile form improvements */
+  .mobile-input {
+    @apply touch-target text-base; /* Prevents zoom on iOS */
+  }
+
+  .mobile-button {
+    @apply touch-target text-base font-medium;
   }
 }

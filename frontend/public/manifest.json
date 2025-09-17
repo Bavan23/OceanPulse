@@ -1,0 +1,65 @@
+{
+  "name": "OceanPulse - Hazard Reporting",
+  "short_name": "OceanPulse",
+  "description": "Crowdsourced ocean hazard reporting platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007BFF",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["weather", "safety", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Report Hazard",
+      "short_name": "Report",
+      "description": "Quickly report a new hazard",
+      "url": "/citizen/submit",
+      "icons": [
+        {
+          "src": "/logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "View Dashboard",
+      "short_name": "Dashboard",
+      "description": "View hazard dashboard",
+      "url": "/citizen/dashboard",
+      "icons": [
+        {
+          "src": "/logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

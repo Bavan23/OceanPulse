@@ -11,14 +11,17 @@ import TermsPage from "./pages/TermsPage";
 import CitizenDashboard from "./pages/CitizenDashboard";
 import SubmitHazard from "./pages/SubmitHazard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminMapView from "./pages/AdminMapView";
 import AdminReports from "./pages/AdminReports";
 import AdminSocial from "./pages/AdminSocial";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
+import AdminAnalytics from './AdminAnalytics';
 
 // Context
 import { AuthProvider } from "./contexts/AuthContext";
 import { OfflineProvider } from "./contexts/OfflineContext";
+import { LoadingProvider } from "./contexts/LoadingContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,9 +52,11 @@ const App = () => (
               
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/map" element={<AdminMapView />} />
               <Route path="/admin/reports" element={<AdminReports />} />
               <Route path="/admin/social" element={<AdminSocial />} />
               <Route path="/admin/profile" element={<ProfilePage />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

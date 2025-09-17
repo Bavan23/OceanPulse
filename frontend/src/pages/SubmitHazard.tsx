@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Camera, Mic, Upload, AlertTriangle, Waves, Zap, Eye, FileText } from 'lucide-react';
+import { ArrowLeft, MapPin, Camera, Mic, Upload, AlertTriangle, Waves, Zap, Eye, FileText, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOffline } from '@/contexts/OfflineContext';
 import { Navbar } from '@/components/common/Navbar';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { apiPlaceholders } from '@/lib/mockData';
 
@@ -23,6 +24,8 @@ const SubmitHazard: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<GeolocationPosition | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   
   const [formData, setFormData] = useState({
     type: '',
@@ -34,9 +37,10 @@ const SubmitHazard: React.FC = () => {
     voiceNote: null as Blob | null,
   });
 
-  // Get current location
+  // Get current location with loading state
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
+      setIsGettingLocation(true);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCurrentLocation(position);
@@ -49,6 +53,7 @@ const SubmitHazard: React.FC = () => {
             title: "Location captured",
             description: "GPS coordinates added to your report",
           });
+          setIsGettingLocation(false);
         },
         (error) => {
           toast({
@@ -56,14 +61,28 @@ const SubmitHazard: React.FC = () => {
             description: "Unable to get your current location",
             variant: "destructive",
           });
+          setIsGettingLocation(false);
         }
       );
     }
   };
 
-  // Handle file upload
+  // Handle file upload with progress
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
+    
+    // Simulate upload progress
+    setUploadProgress(0);
+    const interval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 100);
+
     setFormData(prev => ({
       ...prev,
       media: [...prev.media, ...files].slice(0, 5) // Max 5 files
@@ -165,14 +184,19 @@ const SubmitHazard: React.FC = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <div className="max-w-2xl mx-auto py-6 px-4">
+        <div className="max-w-2xl mx-auto py-6 px-4 mobile-padding">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/citizen/dashboard')}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate('/citizen/dashboard')}
+            className="touch-target"
+          >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Submit Hazard Report</h1>
+            <h1 className="text-responsive-lg font-bold text-foreground">Submit Hazard Report</h1>
             <p className="text-muted-foreground">Help keep the community informed and safe</p>
           </div>
         </div>
@@ -221,7 +245,7 @@ const SubmitHazard: React.FC = () => {
           </Card>
 
           {/* Location */}
-          <Card>
+          <Card className="mobile-card">
             <CardHeader>
               <CardTitle>Location</CardTitle>
             </CardHeader>
@@ -231,16 +255,31 @@ const SubmitHazard: React.FC = () => {
                   value={formData.location}
                   onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                   placeholder="Enter location or use GPS"
-                  className="flex-1"
+                  className="flex-1 touch-target"
                 />
-                <Button type="button" variant="outline" onClick={getCurrentLocation}>
-                  <MapPin className="w-4 h-4" />
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={getCurrentLocation}
+                  disabled={isGettingLocation}
+                  className="touch-target"
+                >
+                  {isGettingLocation ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <MapPin className="w-4 h-4" />
+                  )}
                 </Button>
               </div>
               {currentLocation && (
-                <p className="text-sm text-muted-foreground">
-                  GPS: {currentLocation.coords.latitude.toFixed(4)}, {currentLocation.coords.longitude.toFixed(4)}
-                </p>
+                <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
+                  <p className="text-sm text-success font-medium">
+                    ✓ Location captured successfully
+                  </p>
+                  <p className="text-xs text-success/80 mt-1">
+                    GPS: {currentLocation.coords.latitude.toFixed(4)}, {currentLocation.coords.longitude.toFixed(4)}
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>
@@ -289,7 +328,7 @@ const SubmitHazard: React.FC = () => {
           </Card>
 
           {/* Media Upload */}
-          <Card>
+          <Card className="mobile-card">
             <CardHeader>
               <CardTitle>Photos & Videos</CardTitle>
             </CardHeader>
@@ -299,7 +338,7 @@ const SubmitHazard: React.FC = () => {
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full"
+                  className="w-full touch-target"
                 >
                   <Camera className="w-4 h-4 mr-2" />
                   Add Photos/Videos ({formData.media.length}/5)
@@ -314,12 +353,27 @@ const SubmitHazard: React.FC = () => {
                   className="hidden"
                 />
 
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Uploading...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <Progress value={uploadProgress} className="w-full" />
+                  </div>
+                )}
+
                 {formData.media.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {formData.media.map((file, index) => (
-                      <div key={index} className="p-2 border border-border rounded-lg text-sm">
-                        <Upload className="w-4 h-4 inline mr-2" />
-                        {file.name}
+                      <div key={index} className="p-3 border border-border rounded-lg text-sm mobile-card">
+                        <div className="flex items-center gap-2">
+                          <Upload className="w-4 h-4 text-primary" />
+                          <span className="truncate">{file.name}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -334,7 +388,7 @@ const SubmitHazard: React.FC = () => {
               type="button"
               variant="outline"
               onClick={() => navigate('/citizen/dashboard')}
-              className="flex-1"
+              className="flex-1 touch-target"
             >
               Cancel
             </Button>
@@ -342,9 +396,16 @@ const SubmitHazard: React.FC = () => {
               type="submit"
               variant="ocean"
               disabled={isSubmitting}
-              className="flex-1"
+              className="flex-1 touch-target"
             >
-              {isSubmitting ? 'Submitting...' : isOnline ? 'Submit Report' : 'Save Offline'}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                isOnline ? 'Submit Report' : 'Save Offline'
+              )}
             </Button>
           </div>
         </form>

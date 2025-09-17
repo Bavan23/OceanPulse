@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Plus, Filter, AlertTriangle, Waves, Zap, Eye } from 'lucide-react';
+import { MapPin, Plus, Filter, AlertTriangle, Waves, Zap, Eye, TrendingUp, Users, Activity, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navbar } from '@/components/common/Navbar';
 import { Button } from '@/components/ui/enhanced-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { mockHazardReports } from '@/lib/mockData';
+import { Skeleton } from '@/components/ui/skeleton';
+import { DashboardSkeleton, ReportCardSkeleton } from '@/components/ui/loading-states';
+import { InteractiveMap, mockHazardReports } from '@/components/ui/interactive-map';
+import { HazardTrendChart, generateHazardTrendData } from '@/components/ui/charts';
+import { mockHazardReports as mockData } from '@/lib/mockData';
 
 const CitizenDashboard: React.FC = () => {
   const { user } = useAuth();
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
+  const [showDetailedStats, setShowDetailedStats] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
+
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const hazardTypeIcons = {
     tsunami: Waves,
@@ -29,26 +45,30 @@ const CitizenDashboard: React.FC = () => {
   };
 
   const filteredReports = selectedFilter === 'all' 
-    ? mockHazardReports.slice(0, 6) 
-    : mockHazardReports.filter(report => report.type === selectedFilter).slice(0, 6);
+    ? mockData.slice(0, 6) 
+    : mockData.filter(report => report.type === selectedFilter).slice(0, 6);
 
   const filters = [
-    { key: 'all', label: 'All Hazards', count: mockHazardReports.length },
-    { key: 'tsunami', label: 'Tsunami', count: 12 },
-    { key: 'storm', label: 'Storm', count: 8 },
-    { key: 'flood', label: 'Flood', count: 15 },
-    { key: 'pollution', label: 'Pollution', count: 6 },
+    { key: 'all', label: 'All Hazards', count: mockData.length },
+    { key: 'tsunami', label: 'Tsunami', count: mockData.filter(r => r.type === 'tsunami').length },
+    { key: 'storm', label: 'Storm', count: mockData.filter(r => r.type === 'storm').length },
+    { key: 'flood', label: 'Flood', count: mockData.filter(r => r.type === 'flood').length },
+    { key: 'pollution', label: 'Pollution', count: mockData.filter(r => r.type === 'pollution').length },
   ];
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <div className="max-w-7xl mx-auto py-6 px-4">
+      <div className="max-w-7xl mx-auto py-6 px-4 mobile-padding">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="text-responsive-xl font-bold text-foreground">
               Welcome back, {user?.name}
             </h1>
             <p className="text-muted-foreground mt-1">
@@ -56,44 +76,98 @@ const CitizenDashboard: React.FC = () => {
             </p>
           </div>
           
-          <Button variant="floating" size="fab" asChild>
+          <Button 
+            variant="floating" 
+            size="fab" 
+            asChild
+            className="touch-target-large mobile-tap"
+          >
             <Link to="/citizen/submit">
               <Plus className="w-6 h-6" />
             </Link>
           </Button>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="gradient-ocean text-white">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Active Alerts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold mb-2">23</div>
-              <p className="text-white/80 text-sm">In your region</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Your Reports</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary mb-2">7</div>
-              <p className="text-muted-foreground text-sm">This month</p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Community Impact</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-success mb-2">1.2k</div>
-              <p className="text-muted-foreground text-sm">Lives protected</p>
-            </CardContent>
-          </Card>
+        {/* Quick Stats with Progressive Disclosure */}
+        <div className="space-y-6 mb-8">
+          {/* Primary Stats - Always Visible */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="gradient-ocean text-white hover:shadow-xl transition-all duration-300 cursor-pointer group">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Active Alerts
+                  <AlertTriangle className="w-5 h-5 group-hover:animate-pulse" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold mb-2 group-hover:scale-105 transition-transform">23</div>
+                <p className="text-white/80 text-sm">In your region</p>
+                <div className="mt-2 text-xs text-white/60">Click to view details</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Your Reports
+                  <TrendingUp className="w-5 h-5 text-primary group-hover:animate-bounce" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-primary mb-2 group-hover:scale-105 transition-transform">7</div>
+                <p className="text-muted-foreground text-sm">This month</p>
+                <div className="mt-2 text-xs text-muted-foreground">+2 from last month</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer group">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center justify-between">
+                  Community Impact
+                  <Users className="w-5 h-5 text-success group-hover:animate-pulse" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-success mb-2 group-hover:scale-105 transition-transform">1.2k</div>
+                <p className="text-muted-foreground text-sm">Lives protected</p>
+                <div className="mt-2 text-xs text-muted-foreground">Based on your reports</div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Secondary Stats - Collapsible */}
+          <div className="space-y-4">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full md:w-auto"
+              onClick={() => setShowDetailedStats(!showDetailedStats)}
+            >
+              <Activity className="w-4 h-4 mr-2" />
+              {showDetailedStats ? 'Hide' : 'Show'} Detailed Statistics
+            </Button>
+            
+            {showDetailedStats && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-primary mb-1">95%</div>
+                  <div className="text-sm text-muted-foreground">Accuracy Rate</div>
+                </Card>
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-warning mb-1">12min</div>
+                  <div className="text-sm text-muted-foreground">Avg Response</div>
+                </Card>
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-success mb-1">24/7</div>
+                  <div className="text-sm text-muted-foreground">Monitoring</div>
+                </Card>
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-primary mb-1">156</div>
+                  <div className="text-sm text-muted-foreground">Total Reports</div>
+                </Card>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filter Tabs */}
@@ -117,8 +191,8 @@ const CitizenDashboard: React.FC = () => {
           ))}
         </div>
 
-        {/* Map View */}
-        <Card className="mb-8">
+        {/* Interactive Map */}
+        <Card className="mb-8 mobile-card">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-primary" />
@@ -129,27 +203,64 @@ const CitizenDashboard: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="w-full h-96 bg-muted rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Interactive map will be loaded here</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Shows real-time hazard locations, severity levels, and community reports
-                </p>
-              </div>
-            </div>
+            <InteractiveMap 
+              reports={mockHazardReports}
+              center={[12.9716, 77.5946]}
+              zoom={10}
+              showHeatmap={true}
+              className="mobile-optimized"
+            />
           </CardContent>
         </Card>
 
+        {/* Advanced Features Toggle */}
+        <div className="mb-6">
+          <Button
+            variant="outline"
+            onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
+            className="w-full md:w-auto touch-target"
+          >
+            {showAdvancedFeatures ? (
+              <>
+                <ChevronUp className="w-4 h-4 mr-2" />
+                Hide Advanced Features
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-4 h-4 mr-2" />
+                Show Advanced Features
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Advanced Analytics - Progressive Disclosure */}
+        {showAdvancedFeatures && (
+          <Card className="mb-8 mobile-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Hazard Trends
+              </CardTitle>
+              <CardDescription>
+                Monthly trend analysis of hazard reports
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HazardTrendChart data={generateHazardTrendData()} />
+            </CardContent>
+          </Card>
+        )}
+
         {/* Recent Reports */}
-        <Card>
+        <Card className="mobile-card">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Recent Hazard Reports</CardTitle>
                 <CardDescription>Latest community-reported ocean hazards</CardDescription>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="touch-target">
                 <Filter className="w-4 h-4 mr-2" />
                 Filter
               </Button>
@@ -161,11 +272,14 @@ const CitizenDashboard: React.FC = () => {
                 const IconComponent = hazardTypeIcons[report.type as keyof typeof hazardTypeIcons] || AlertTriangle;
                 
                 return (
-                  <Card key={report.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <Card 
+                    key={report.id} 
+                    className="mobile-card hover:shadow-lg transition-shadow cursor-pointer mobile-tap"
+                  >
                     <CardHeader className="pb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="p-2 gradient-ocean rounded-lg">
+                          <div className="p-2 gradient-ocean rounded-lg touch-target">
                             <IconComponent className="w-4 h-4 text-white" />
                           </div>
                           <div>

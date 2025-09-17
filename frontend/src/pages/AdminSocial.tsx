@@ -18,7 +18,7 @@ const AdminSocial: React.FC = () => {
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {
-      case 'positive': return 'success';
+      case 'positive': return 'default';
       case 'negative': return 'destructive';
       case 'neutral': return 'secondary';
       default: return 'secondary';
@@ -279,7 +279,7 @@ const AdminSocial: React.FC = () => {
                             </Badge>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={getSentimentColor(post.sentiment) as any} className="text-xs">
+                            <Badge variant={getSentimentColor(post.sentiment)} className="text-xs">
                               {post.sentiment}
                             </Badge>
                             <span className="text-xs text-muted-foreground">

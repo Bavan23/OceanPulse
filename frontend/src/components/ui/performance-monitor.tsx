@@ -24,6 +24,7 @@ export const PerformanceMonitor: React.FC<{
       const renderTime = performance.now() - startTime;
       
       // Get memory usage if available
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const memoryUsage = (performance as any).memory?.usedJSHeapSize;
       
       const newMetrics: PerformanceMetrics = {

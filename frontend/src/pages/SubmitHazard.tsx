@@ -133,8 +133,8 @@ const SubmitHazard: React.FC = () => {
     setIsSubmitting(true);
 
     const reportData = {
-      type: formData.type as any,
-      severity: formData.severity as any || 'medium',
+      type: formData.type as 'tsunami' | 'storm' | 'flood' | 'pollution' | 'other',
+      severity: (formData.severity || 'medium') as 'high' | 'low' | 'medium',
       title: formData.title || `${formData.type} Report`,
       description: formData.description,
       location: {
@@ -143,6 +143,8 @@ const SubmitHazard: React.FC = () => {
         address: formData.location || 'Unknown location'
       },
       media: formData.media.map(file => file.name), // In real app, upload files and get URLs
+      timestamp: Date.now().toString(),
+      reportedBy: user?.id || 'anonymous',
     };
 
     try {

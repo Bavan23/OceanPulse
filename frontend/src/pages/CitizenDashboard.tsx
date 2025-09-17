@@ -37,9 +37,9 @@ const CitizenDashboard: React.FC = () => {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'high': return 'danger';
-      case 'medium': return 'warning';
-      case 'low': return 'success';
+      case 'high': return 'destructive';
+      case 'medium': return 'secondary';
+      case 'low': return 'default';
       default: return 'secondary';
     }
   };
@@ -289,7 +289,7 @@ const CitizenDashboard: React.FC = () => {
                             </CardDescription>
                           </div>
                         </div>
-                        <Badge variant={getSeverityColor(report.severity) as any}>
+                        <Badge variant={getSeverityColor(report.severity)}>
                           {report.severity}
                         </Badge>
                       </div>

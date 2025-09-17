@@ -219,7 +219,7 @@ export const mockAIInsights: AIInsight[] = [
 // API Placeholder Functions
 export const apiPlaceholders = {
   // Hazard Reports
-  async fetchHazardReports(filters?: any): Promise<HazardReport[]> {
+  async fetchHazardReports(filters?: unknown): Promise<HazardReport[]> {
     // TODO: Replace with actual API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     return mockHazardReports;

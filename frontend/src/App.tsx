@@ -16,7 +16,7 @@ import AdminReports from "./pages/AdminReports";
 import AdminSocial from "./pages/AdminSocial";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
-import AdminAnalytics from './AdminAnalytics';
+import AdminAnalytics from './pages/AdminAnalytics';
 
 // Context
 import { AuthProvider } from "./contexts/AuthContext";

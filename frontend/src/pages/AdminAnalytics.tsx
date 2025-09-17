@@ -4,14 +4,66 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { SeverityDistributionChart, ResponseTimeChart, HazardTypeChart, RegionalHeatmapChart, ReportsTrendChart, UserContributionChart, EnvironmentalImpactChart, AdminOpsChart, ForecastChart } from '@/components/ui/charts';
-import { mockHazardReports, mockAIInsights, mockUserContributions, mockEnvironmentalImpact, mockAdminOps } from '@/lib/mockData';
+import { mockHazardReports, mockAIInsights } from '@/lib/mockData';
+import { mockUserContributions, mockEnvironmentalImpact, mockEnvironmentalImpactSummary, mockAdminOps, mockAdminOpsSummary } from '@/lib/mockChartData';
 
 const AdminAnalytics: React.FC = () => {
   // Example mock/stat calculations
   const totalReports = mockHazardReports.length;
-  const unresolvedHazards = mockHazardReports.filter(r => !r.resolved).length;
-  const activeRegions = [...new Set(mockHazardReports.map(r => r.location.region))].length;
-  const responseRate = Math.round((mockHazardReports.filter(r => r.verified).length / totalReports) * 100);
+  const unresolvedHazards = mockHazardReports.filter(r => r.status !== 'resolved').length;
+  const activeRegions = [...new Set(mockHazardReports.map(r => r.location.address))].length;
+  const responseRate = Math.round((mockHazardReports.filter(r => r.status === 'verified').length / totalReports) * 100);
+
+  // Data transformation functions
+  const getReportsTrendData = () => {
+    const reportsByDate = mockHazardReports.reduce((acc, report) => {
+      const date = new Date(report.timestamp).toLocaleDateString();
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.entries(reportsByDate).map(([name, reports]) => ({ name, reports }));
+  };
+
+  const getHazardTypeData = () => {
+    const types = mockHazardReports.reduce((acc, report) => {
+      acc[report.type] = (acc[report.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.entries(types).map(([name, count]) => ({ name, count }));
+  };
+
+  const getSeverityData = () => {
+    const severities = mockHazardReports.reduce((acc, report) => {
+      acc[report.severity] = (acc[report.severity] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.entries(severities).map(([name, value]) => ({ name, value }));
+  };
+
+  const getResponseTimeData = () => {
+    // Mock response times based on status
+    const responseTimes = mockHazardReports.map((report, index) => ({
+      name: `Report ${index + 1}`,
+      responseTime: report.status === 'resolved' ? Math.floor(Math.random() * 30) + 5 : 0
+    }));
+    return responseTimes.slice(0, 10); // Take first 10 for chart
+  };
+
+  const getForecastData = () => {
+    return mockAIInsights.map((insight, index) => ({
+      name: insight.title.substring(0, 20) + '...',
+      value: insight.confidence * 100
+    }));
+  };
+
+  const getRegionalData = () => {
+    const regions = mockHazardReports.reduce((acc, report) => {
+      const region = report.location.address.split(',')[0] || 'Unknown'; // Get city/state
+      acc[region] = (acc[region] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    return Object.entries(regions).map(([name, count]) => ({ name, count }));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,7 +120,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Reports Over Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <ReportsTrendChart data={mockHazardReports} />
+              <ReportsTrendChart data={getReportsTrendData()} />
             </CardContent>
           </Card>
           <Card>
@@ -76,7 +128,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Hazard Types</CardTitle>
             </CardHeader>
             <CardContent>
-              <HazardTypeChart data={mockHazardReports} />
+              <HazardTypeChart data={getHazardTypeData()} />
             </CardContent>
           </Card>
           <Card>
@@ -84,7 +136,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Regional Distribution</CardTitle>
             </CardHeader>
             <CardContent>
-              <RegionalHeatmapChart data={mockHazardReports} />
+              <RegionalHeatmapChart data={getRegionalData()} />
             </CardContent>
           </Card>
         </div>
@@ -96,7 +148,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Severity Breakdown</CardTitle>
             </CardHeader>
             <CardContent>
-              <SeverityDistributionChart data={mockHazardReports} />
+              <SeverityDistributionChart data={getSeverityData()} />
             </CardContent>
           </Card>
           <Card>
@@ -104,7 +156,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Response Time Analysis</CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponseTimeChart data={mockHazardReports} />
+              <ResponseTimeChart data={getResponseTimeData()} />
             </CardContent>
           </Card>
         </div>
@@ -152,7 +204,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Marine Debris Reported</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockEnvironmentalImpact.debrisVolume} kg</div>
+              <div className="text-2xl font-bold">{mockEnvironmentalImpactSummary.debrisVolume} kg</div>
               <CardDescription>Estimated volume collected/reported</CardDescription>
             </CardContent>
           </Card>
@@ -173,7 +225,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Average Verification Time</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{mockAdminOps.avgVerificationTime} min</div>
+              <div className="text-2xl font-bold">{mockAdminOpsSummary.avgVerificationTime} min</div>
               <CardDescription>Compared to target</CardDescription>
             </CardContent>
           </Card>
@@ -186,7 +238,7 @@ const AdminAnalytics: React.FC = () => {
               <CardTitle>Forecasts & AI Insights</CardTitle>
             </CardHeader>
             <CardContent>
-              <ForecastChart data={mockAIInsights} />
+              <ForecastChart data={getForecastData()} />
             </CardContent>
           </Card>
         </div>

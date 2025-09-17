@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string, role: 'citizen' | 'admin') => Promise<void>;
+  oauthLogin: (user: User) => void;
   signup: (email: string, password: string, name: string, role: 'citizen' | 'admin') => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -51,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // TODO: Replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const mockUser: User = {
         id: Math.random().toString(36).substr(2, 9),
         email,
@@ -70,12 +71,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const oauthLogin = (user: User): void => {
+    setUser(user);
+    localStorage.setItem('oceanpulse_user', JSON.stringify(user));
+  };
+
   const signup = async (email: string, password: string, name: string, role: 'citizen' | 'admin'): Promise<void> => {
     setIsLoading(true);
     try {
       // TODO: Replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       const mockUser: User = {
         id: Math.random().toString(36).substr(2, 9),
         email,
@@ -103,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     isLoading,
     login,
+    oauthLogin,
     signup,
     logout,
     isAuthenticated: !!user,

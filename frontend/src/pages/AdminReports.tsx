@@ -199,7 +199,7 @@ const AdminReports: React.FC = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={getSeverityVariant(report.severity) as any}>
+                        <Badge variant={getSeverityVariant(report.severity)}>
                           {report.severity}
                         </Badge>
                       </TableCell>

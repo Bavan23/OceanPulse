@@ -17,8 +17,18 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card';
 
+interface ChartDataPoint {
+  date?: string;
+  reports?: number;
+  name?: string;
+  value?: number;
+  hour?: string;
+  region?: string;
+  responseTime?: number;
+}
+
 interface ChartProps {
-  data: any[];
+  data: ChartDataPoint[];
   title?: string;
   description?: string;
   className?: string;
@@ -143,7 +153,7 @@ export const RegionalActivityChart: React.FC<ChartProps> = ({ data, title, descr
 };
 
 // Mini Stats Chart
-export const MiniStatsChart: React.FC<{ data: any[]; className?: string }> = ({ data, className }) => {
+export const MiniStatsChart: React.FC<{ data: ChartDataPoint[]; className?: string }> = ({ data, className }) => {
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height={60}>

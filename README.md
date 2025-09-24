@@ -1,4 +1,4 @@
-#OceanPulse - Ocean Hazard Reporting Platform 🌊
+<h1 align="center" style="font-size: 80px;">OceanPulse - Ocean Hazard Reporting Platform 🌊</h1>
 
 
 ## Overview

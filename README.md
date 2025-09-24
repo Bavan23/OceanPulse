@@ -1,42 +1,74 @@
-<h1 align="center" style="font-size: 80px;">OceanPulse - Ocean Hazard Reporting Platform 🌊</h1>
+<h1 align="center"><strong>OceanPulse 🌊</strong></h1>
+
+<h2 align="center">
+  Crowdsourced Ocean Hazard Reporting Platform with Real-Time Social Media Analytics
+</h2>
+
+---
+<p align="center">
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
+  </a>
+  <img src="https://img.shields.io/badge/Frontend-ReactJS-blue" alt="Frontend: ReactJS">
+  <img src="https://img.shields.io/badge/Backend-FastAPI-green" alt="Backend: FastAPI">
+  <img src="https://img.shields.io/badge/Database-PostgreSQL-yellow" alt="Database: PostgreSQL">
+</p>
+
 
 
 ## Overview
-This project is a **Smart India Hackathon 2025 (SIH 2025)** submission for Problem ID 25039:  
-**Integrated Platform for Crowdsourced Ocean Hazard Reporting & Social Media Analytics**.
+OceanPulse is a **full-stack web platform** designed to empower coastal communities, fishermen, and disaster management authorities. It provides:
 
-The platform enables **real-time ocean hazard reporting**, predictive insights using AI, and social media trend analysis to support early warnings and disaster preparedness for coastal communities.
+- Real-time hazard reporting via citizen contributions.
+- Predictive alerts using AI and NLP.
+- Social media trend analysis to support early warning and preparedness.
 
 ---
 
 ## Features
-- **Crowdsourced Hazard Reporting:** Users can report hazards in real-time with geolocation.  
-- **Interactive Hazard Map:** Visualize hazards and trends geographically.  
-- **Social Media Analytics:** Analyze Twitter and other platforms for early signals of hazards.  
-- **Predictive Alerts:** AI-driven predictions for potential hazards.  
-- **User Management:** Authentication and role-based access control for secure usage.  
+- **Crowdsourced Hazard Reporting:** Submit location-tagged hazard reports with photos, videos, or voice notes.
+- **Interactive Hazard Map:** Dynamic visualization of hazards and trends using Leaflet.js.
+- **AI & Social Media Analytics:** Analyze Twitter, Instagram, and other platforms for early hazard signals.
+- **Predictive Alerts:** AI-powered alerts based on verified reports and social media trends.
+- **Role-Based Access:** Secure authentication for citizens, admins, and analysts.
+- **Multilingual & Offline Support:** IndexedDB enables offline data capture for remote areas.
 
 ---
 
 ## Tech Stack
-- **Frontend:** ReactJS 
-- **Backend:**  Python (FastAPI)  
-- **Database:** PostgreSQL + PostGIS
-- **AI & NLP:** Python, Hugging Face Transformers (IndicBERT for text, Whisper for voice), Twitter API / YouTube API
-- **Offline Support:** IndexedDB (Web)
-- **Media Storage:** AWS S3
-- **Mapping / Visualization:** Leaflet.js  
-- **Deployment:** Docker on AWS
+| Layer | Technology |
+|-------|------------|
+| Frontend | ReactJS|
+| Backend | Python, FastAPI |
+| Database | PostgreSQL + PostGIS |
+| Offline Support | IndexedDB (Web)|
+| AI & NLP | Hugging Face Transformers (IndicBERT for text, Whisper for voice) |
+| Media Storage | AWS S3 |
+| Mapping & Visualization | Leaflet.js |
+| Deployment | Docker on AWS |
 
 ---
 
 ## Getting Started
+
 ### Prerequisites
-- Python ≥ 3.10  
-- PostgreSQL installed locally or cloud instance  
-- Docker (optional, for containerized deployment)  
+- Python ≥ 3.10
+- Node.js ≥ 18
+- PostgreSQL (local or cloud)
+- Docker (optional, for containerized deployment)
 
 ### Installation
-1. Clone the repository:
 ```bash
+# Clone the repo
 git clone https://github.com/Bavan23/OceanPulse.git
+cd OceanPulse
+
+# Install frontend
+cd frontend
+npm install
+npm run dev
+
+# Install backend
+cd ../backend
+pip install -r requirements.txt
+uvicorn main:app --reload

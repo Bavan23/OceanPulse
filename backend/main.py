@@ -1,4 +1,4 @@
-# backend/main.py
+# backend//main.py
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -25,7 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 class HazardIn(BaseModel):
     lat: float
     lon: float

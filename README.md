@@ -1,7 +1,7 @@
 <h1 align="center"><strong>OceanPulse 🌊</strong></h1>
 
 <h2 align="center">
-  Crowdsourced Ocean Hazard Reporting Platform with Real-Time Social Media Analytics
+  Crowdsourced Ocean Hazard Reporting Platform with Real-Time Social Media Analytics.
 </h2>
 
 ---
